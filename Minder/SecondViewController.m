@@ -26,4 +26,13 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)logOut:(id)sender {
+    
+    
+    // Log out
+    [PFUser logOut];
+    NSLog(@"Logout Hit");
+    [self.tabBarController setSelectedIndex:0];
+    
+}
 @end

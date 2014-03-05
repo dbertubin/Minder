@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
 @interface SecondViewController : UIViewController
+- (IBAction)logOut:(id)sender;
 
 @end
