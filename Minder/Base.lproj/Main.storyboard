@@ -58,26 +58,43 @@
         <scene sceneID="H8I-yR-s2v">
             <objects>
                 <tableViewController id="2De-ku-Joh" customClass="MainViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="wzm-CB-eLF">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="97" sectionHeaderHeight="22" sectionFooterHeight="22" id="wzm-CB-eLF">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Bwe-e8-PXe">
-                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="97" id="ckG-aG-OsL" customClass="CustomTableViewCell">
+                                <rect key="frame" x="0.0" y="86" width="320" height="97"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Bwe-e8-PXe" id="zNi-R8-cCJ">
-                                    <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ckG-aG-OsL" id="ya0-Y3-Zlt">
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="96"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NZg-7H-8z9">
+                                            <rect key="frame" x="20" y="38" width="267" height="38"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j89-qG-zen">
+                                            <rect key="frame" x="20" y="9" width="42" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="bhB-F0-dxU" kind="push" id="tgz-MO-SNQ"/>
+                                    <outlet property="postedByLabel" destination="j89-qG-zen" id="s57-yC-SMR"/>
+                                    <outlet property="quoteLabel" destination="NZg-7H-8z9" id="CvA-n2-TtZ"/>
+                                    <segue destination="bhB-F0-dxU" kind="push" identifier="Sho" id="uDk-EY-1ji"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
+                        <sections/>
                         <connections>
-                            <outlet property="dataSource" destination="2De-ku-Joh" id="o9V-nL-XN5"/>
-                            <outlet property="delegate" destination="2De-ku-Joh" id="iLr-gk-8ur"/>
+                            <outlet property="dataSource" destination="2De-ku-Joh" id="hRP-hS-1Fm"/>
+                            <outlet property="delegate" destination="2De-ku-Joh" id="PTl-t2-vt3"/>
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="bxU-qI-Sda">
@@ -90,7 +107,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NfK-G1-gmc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="898" y="-105"/>
+            <point key="canvasLocation" x="904" y="-105"/>
         </scene>
         <!--Add New View Controller-->
         <scene sceneID="0Wm-nz-4Y6">
@@ -169,6 +186,7 @@
                     <connections>
                         <outlet property="authorText" destination="wiS-0a-Xpd" id="gcu-16-GxS"/>
                         <outlet property="quoteText" destination="51z-72-M53" id="Z3w-bT-ACO"/>
+                        <outlet property="sharedSwitch" destination="nlp-Xh-cZM" id="arn-CK-a3N"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jHx-gf-ZBL" userLabel="First Responder" sceneMemberID="firstResponder"/>

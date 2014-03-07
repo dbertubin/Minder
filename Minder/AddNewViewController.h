@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
 @interface AddNewViewController : UIViewController
 
@@ -14,5 +15,7 @@
 
 @property (weak, nonatomic) IBOutlet UITextView *quoteText;
 @property (weak, nonatomic) IBOutlet UITextField *authorText;
+@property (weak, nonatomic) IBOutlet UISwitch *sharedSwitch;
+@property (nonatomic) Boolean * shared;
 
 @end

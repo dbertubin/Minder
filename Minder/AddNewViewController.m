@@ -7,13 +7,15 @@
 //
 
 #import "AddNewViewController.h"
-#import <Parse/Parse.h>
+
 
 @interface AddNewViewController ()
 
 @end
 
 @implementation AddNewViewController
+@synthesize shared = _shared;
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -31,6 +33,8 @@
     [super viewDidLoad];
     self.quoteText.backgroundColor = [UIColor clearColor];
     self.authorText.backgroundColor = [UIColor clearColor];
+    
+
 	// Do any additional setup after loading the view.
 }
 
@@ -48,12 +52,28 @@
     [newQuote setObject: self.quoteText.text forKey:@"quote"];
     [newQuote setObject: self.authorText.text forKey:@"author"];
     
+    if (self.sharedSwitch.isOn) {
+        PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
+        [postACL setPublicReadAccess:YES];
+        newQuote.ACL = postACL;
+    } else {
+        PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
+        [postACL setPublicReadAccess:NO];
+        newQuote.ACL = postACL;
+    }
+    
+    
+    newQuote.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
     // Create 1-1 relationship between the current user and the post
     [newQuote setObject:[PFUser currentUser] forKey:@"fromUser"];
     [newQuote saveEventually:^(BOOL succeeded, NSError *error) {
         NSLog(@"Object saved to Parse! :)");
+        
+        
     }];
 }
+
+
 
 
 
