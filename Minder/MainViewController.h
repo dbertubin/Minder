@@ -15,6 +15,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *postedByLabel;
 @property (weak, nonatomic) IBOutlet UILabel *quoteLabel;
 
-@property (weak, nonatomic) NSMutableArray * quotes;
+@property (strong, nonatomic) NSMutableArray * quotes;
 @property (weak, nonatomic) PFUser * currentUser;
 @end

@@ -46,26 +46,45 @@
 
 
 - (void)saveQuote{
+    PFACL *defaultACL = [PFACL ACL];
+    [defaultACL setPublicReadAccess:YES];
+    [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
+    
+    
     // We create a new Parse object and set the data we want to store
     PFObject *newQuote = [[PFObject alloc] initWithClassName:@"Quote"];
     
     [newQuote setObject: self.quoteText.text forKey:@"quote"];
     [newQuote setObject: self.authorText.text forKey:@"author"];
     
+    if ([PFUser currentUser] != nil) {
+        [newQuote setObject: [PFUser currentUser].username forKey:@"username"];
+    } else {
+        [newQuote setObject: @"Guest User" forKey:@"username"];
+    }
+    
+    
     if (self.sharedSwitch.isOn) {
-        PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
-        [postACL setPublicReadAccess:YES];
-        newQuote.ACL = postACL;
+//        PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
+//        [postACL setPublicReadAccess:YES];
+//        newQuote.ACL = postACL;
+//        NSLog(@"Switch is set to on");
     } else {
         PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
         [postACL setPublicReadAccess:NO];
         newQuote.ACL = postACL;
+        NSLog(@"Switch is set to off");
     }
     
     
-    newQuote.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-    // Create 1-1 relationship between the current user and the post
-    [newQuote setObject:[PFUser currentUser] forKey:@"fromUser"];
+//    newQuote.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+//    // Create 1-1 relationship between the current user and the post
+    if ([PFUser currentUser] != nil) {
+        [newQuote setObject:[PFUser currentUser] forKey:@"fromUser"];
+    } else {
+        
+    }
+    
     [newQuote saveEventually:^(BOOL succeeded, NSError *error) {
         NSLog(@"Object saved to Parse! :)");
         
@@ -77,7 +96,7 @@
 
 
 
-- (IBAction)onSavedClicked:(UIButton *)sender {
+- (IBAction)onSavedClicked:(UIBarButtonItem *)sender {
     [self saveQuote];
     [ self dismissViewControllerAnimated:YES completion:nil];
     
@@ -87,4 +106,8 @@
     [self.view endEditing:YES];
 }
 
+- (IBAction)onCancelClicked:(UIBarButtonItem*)sender {
+    [ self dismissViewControllerAnimated:YES completion:nil];
+
+}
 @end

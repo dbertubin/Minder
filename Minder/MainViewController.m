@@ -32,13 +32,15 @@
 {
     [super viewDidLoad];
     
+
+    
     [self reloadTable];
     
-//    UIRefreshControl *refreshControl = [[UIRefreshControl alloc]
-//                                        init];
-//    self.refreshControl = refreshControl;
-//    [refreshControl addTarget:self action:@selector(reloadTable) forControlEvents:UIControlEventValueChanged];
-//    [self setRefreshControl:refreshControl];
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc]
+                                        init];
+    self.refreshControl = refreshControl;
+    [refreshControl addTarget:self action:@selector(reloadTable) forControlEvents:UIControlEventValueChanged];
+    [self setRefreshControl:refreshControl];
     
     // Uncomment the following line to preserve selection between presentations.
     //     self.clearsSelectionOnViewWillAppear = NO;
@@ -49,19 +51,18 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-//    [self reloadTable];
+    [self reloadTable];
 }
 
 - (void)reloadTable
 {
-    if ([PFUser currentUser]) {
         [self parseQuery];
         [self.tableView reloadData];
         if (self.refreshControl.isRefreshing) {
             NSLog(@"Is refreshing");
             [self.refreshControl endRefreshing];
         }
-    }
+    
 }
 
 #pragma mark - Parse Stuff
@@ -73,6 +74,7 @@
         // Create the log in view controller
         PFLogInViewController *logInViewController = [[PFLogInViewController alloc] init];
         [logInViewController setDelegate:self]; // Set ourselves as the delegate
+
         
         // Create the sign up view controller
         PFSignUpViewController *signUpViewController = [[PFSignUpViewController alloc] init];
@@ -107,6 +109,7 @@
 }
 
 
+
 // Sent to the delegate when the log in attempt fails.
 - (void)logInViewController:(PFLogInViewController *)logInController didFailToLogInWithError:(NSError *)error {
     NSLog(@"Failed to log in...");
@@ -114,6 +117,14 @@
 
 // Sent to the delegate when the log in screen is dismissed.
 - (void)logInViewControllerDidCancelLogIn:(PFLogInViewController *)logInController {
+    [PFAnonymousUtils logInWithBlock:^(PFUser *user, NSError *error) {
+        if (error) {
+            NSLog(@"Anonymous login failed.");
+        } else {
+            NSLog(@"Anonymous user logged in.");
+        }
+    }];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -142,13 +153,28 @@
     return informationComplete;
 }
 
+// Sent to the delegate when a PFUser is signed up.
+- (void)signUpViewController:(PFSignUpViewController *)signUpController didSignUpUser:(PFUser *)user {
+    [self dismissViewControllerAnimated:YES completion:NULL]; // Dismiss the PFSignUpViewController
+}
+
+// Sent to the delegate when the sign up attempt fails.
+- (void)signUpViewController:(PFSignUpViewController *)signUpController didFailToSignUpWithError:(NSError *)error {
+    NSLog(@"Failed to sign up...");
+}
+
+// Sent to the delegate when the sign up screen is dismissed.
+- (void)signUpViewControllerDidCancelSignUp:(PFSignUpViewController *)signUpController {
+    NSLog(@"User dismissed the signUpViewController");
+}
+
 
 #pragma mark - Parse Query
 -(void)parseQuery;
 {
 //    PFQuery *query = [PFUser query];
     PFQuery *quotesFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
-    [quotesFromCurrentUser whereKey:@"fromUser" equalTo:[PFUser currentUser]];
+//    [quotesFromCurrentUser whereKey:@"fromUser" equalTo:[PFUser currentUser]];
     //    [quotesFromCurrentUser whereKey:@"status" containsString:@"toDo"];
     quotes = (NSMutableArray*)[quotesFromCurrentUser findObjects];
     NSLog(@"%d", [quotes count]);
@@ -178,17 +204,11 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CustomTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    currentUser = [PFUser currentUser];
     
     
-//    static NSString * CellIdentifier = @"Cell";
-//    CustomTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-//    
-//    if (cell == nil) {
-//        cell = [[CustomTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-//    }
-//    
-    
-    cell.quoteLabel.text = [[quotes valueForKey:@"quote"]objectAtIndex:indexPath.row];
+    cell.quoteLabel.text = [[[[quotes reverseObjectEnumerator] allObjects] valueForKey:@"quote"]objectAtIndex:indexPath.row];
+    cell.postedByLabel.text = [[[[quotes reverseObjectEnumerator] allObjects] valueForKey:@"username"]objectAtIndex:indexPath.row];
     return cell;
 }
 
@@ -242,5 +262,8 @@
  }
  
  */
+
+
+
 
 @end
