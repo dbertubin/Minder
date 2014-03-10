@@ -271,11 +271,21 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="Q1P-au-RKw">
-                        <barButtonItem key="rightBarButtonItem" title="Edit" id="ifd-9H-Oft"/>
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="UDB-gv-VFn">
+                            <connections>
+                                <action selector="onCancel:" destination="bhB-F0-dxU" id="z14-ws-kr1"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Edit" id="ifd-9H-Oft">
+                            <connections>
+                                <action selector="editSaveItem:" destination="bhB-F0-dxU" id="dan-vL-iBe"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="authorText" destination="XPS-2l-7w1" id="FbH-ez-bix"/>
+                        <outlet property="cancelButton" destination="UDB-gv-VFn" id="Go7-fp-ZEa"/>
                         <outlet property="editSaveButton" destination="ifd-9H-Oft" id="liy-Hd-DeD"/>
                         <outlet property="quoteText" destination="MAV-k5-7KN" id="1ZP-n2-k5R"/>
                         <outlet property="sharedLabel" destination="JEu-fh-Uaf" id="g75-64-ctA"/>

@@ -14,5 +14,10 @@
 @property (weak, nonatomic) IBOutlet UISwitch *sharedSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *sharedLabel;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editSaveButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelButton;
+
+- (IBAction)editSaveItem:(UIBarButtonItem *)sender;
+
+- (IBAction)onCancel:(UIBarButtonItem *)sender;
 
 @end

@@ -98,6 +98,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    [self reloadTable];
     
     if (![PFUser currentUser]) { // No user logged in
         // Create the log in view controller
