@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 #import "CustomTableViewCell.h"
+#import "DetailViewController.h"
 
 @interface MainViewController : UITableViewController <PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate,UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate >
 

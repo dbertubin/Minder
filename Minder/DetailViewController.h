@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
 @interface DetailViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UITextView *quoteText;
@@ -15,6 +16,12 @@
 @property (weak, nonatomic) IBOutlet UILabel *sharedLabel;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editSaveButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelButton;
+@property (weak, nonatomic) NSString * quoteString;
+@property (weak, nonatomic) NSString * authorString;
+@property (weak, nonatomic) NSString * userNameString;
+
+
+@property UIBarButtonItem *leftBarButton;
 
 - (IBAction)editSaveItem:(UIBarButtonItem *)sender;
 

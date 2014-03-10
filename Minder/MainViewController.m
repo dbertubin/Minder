@@ -312,8 +312,12 @@
 // In a story board-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    if ([[segue identifier] isEqualToString:@"ShowDetails"]) {
+        DetailViewController * detailView = (DetailViewController *)[segue destinationViewController];
+        detailView.quoteString = [[quotes objectAtIndex:[[self.tableView indexPathForSelectedRow] row]]valueForKey:@"quote"];
+        detailView.authorString = [[quotes objectAtIndex:[[self.tableView indexPathForSelectedRow] row]]valueForKey:@"author"];
+        detailView.userNameString = [[quotes objectAtIndex:[[self.tableView indexPathForSelectedRow] row]]valueForKey:@"username"];
+    }
 }
 
 

@@ -18,15 +18,29 @@
 @synthesize authorText;
 @synthesize sharedLabel;
 @synthesize sharedSwitch;
+@synthesize quoteString;
+@synthesize authorString;
+@synthesize leftBarButton;
+@synthesize userNameString;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     [self.quoteText setEditable:NO];
+    self.authorText.enabled = NO;
     [self.sharedSwitch setEnabled:NO];
-    [self.cancelButton setTitle:@""];
-    [self.cancelButton setEnabled:NO];
+    
+    quoteText.text = quoteString;
+    authorText.text = authorString;
+    
+    if (![userNameString isEqualToString:[[PFUser currentUser]username]]) {
+        self.sharedSwitch.hidden = YES;
+        self.editSaveButton.title = @"";
+        self.editSaveButton.enabled = NO;
+    }
+    
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -42,30 +56,34 @@
         [self.quoteText setEditable:YES];
         [self.quoteText becomeFirstResponder];
         [self.sharedSwitch setEnabled:YES];
-        [self.cancelButton setTitle:@"Cancel"];
-        [self.cancelButton setEnabled:YES];
+        self.authorText.enabled = YES;
+        [self.navigationItem setHidesBackButton:TRUE];
+        
+        leftBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(onCancel:)];
+        [self.navigationItem setLeftBarButtonItem:leftBarButton];
+        
+        
     } else {
         self.editSaveButton.title = @"Edit";
         [self.quoteText setEditable:NO];
         [self.quoteText resignFirstResponder];
         [self.sharedSwitch setEnabled:NO];
-        [self.cancelButton setTitle:@""];
-        [self.cancelButton setEnabled:NO];
+        
+        
     }
-    
-    
-    
-    
-    
-    
+
 }
 
 - (IBAction)onCancel:(UIBarButtonItem *)sender {
+    
+    
     self.editSaveButton.title = @"Edit";
     [self.quoteText setEditable:NO];
     [self.quoteText resignFirstResponder];
     [self.sharedSwitch setEnabled:NO];
-    [self.cancelButton setTitle:@""];
-    [self.cancelButton setEnabled:NO];
+    [self.navigationItem setLeftBarButtonItem:nil];
+    [self.navigationItem setHidesBackButton:FALSE];
+    
+    
 }
 @end
