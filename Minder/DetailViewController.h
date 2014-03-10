@@ -19,6 +19,7 @@
 @property (weak, nonatomic) NSString * quoteString;
 @property (weak, nonatomic) NSString * authorString;
 @property (weak, nonatomic) NSString * userNameString;
+@property (weak, nonatomic) NSString * postID;
 
 
 @property UIBarButtonItem *leftBarButton;

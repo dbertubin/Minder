@@ -22,6 +22,7 @@
 @synthesize authorString;
 @synthesize leftBarButton;
 @synthesize userNameString;
+@synthesize postID;
 
 - (void)viewDidLoad
 {
@@ -68,7 +69,9 @@
         [self.quoteText setEditable:NO];
         [self.quoteText resignFirstResponder];
         [self.sharedSwitch setEnabled:NO];
-        
+        [self saveParseObject];
+        [self.navigationItem setLeftBarButtonItem:nil];
+        [self.navigationItem setHidesBackButton:FALSE];
         
     }
 
@@ -83,6 +86,39 @@
     [self.sharedSwitch setEnabled:NO];
     [self.navigationItem setLeftBarButtonItem:nil];
     [self.navigationItem setHidesBackButton:FALSE];
+    
+    
+}
+
+
+#pragma mark - Save Edit
+- (void)saveParseObject {
+    
+    PFACL *defaultACL = [PFACL ACL];
+    [defaultACL setPublicReadAccess:YES];
+    [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
+    
+    
+    PFQuery *postFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
+    
+    // We create a new Parse object and set the data we want to store
+    PFObject *postEdited = [postFromCurrentUser getObjectWithId:postID];
+    
+    [postEdited setObject: quoteText.text forKey:@"quote"];
+    [postEdited setObject: authorText.text forKey:@"author"];
+    
+    if (!self.sharedSwitch.isOn) {
+    
+        PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
+        [postACL setPublicReadAccess:NO];
+        postEdited.ACL = postACL;
+        NSLog(@"Switch is set to off");
+    }
+    
+    // Create 1-1 relationship between the current user and the post
+    [postEdited saveEventually:^(BOOL succeeded, NSError *error) {
+        NSLog(@"Object saved to Parse! :)");
+    }];
     
     
 }

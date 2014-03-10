@@ -65,10 +65,6 @@
     
     
     if (self.sharedSwitch.isOn) {
-//        PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
-//        [postACL setPublicReadAccess:YES];
-//        newQuote.ACL = postACL;
-//        NSLog(@"Switch is set to on");
     } else {
         PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
         [postACL setPublicReadAccess:NO];

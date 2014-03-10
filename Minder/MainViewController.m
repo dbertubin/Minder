@@ -215,6 +215,9 @@
 }
 
 
+
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -317,6 +320,7 @@
         detailView.quoteString = [[quotes objectAtIndex:[[self.tableView indexPathForSelectedRow] row]]valueForKey:@"quote"];
         detailView.authorString = [[quotes objectAtIndex:[[self.tableView indexPathForSelectedRow] row]]valueForKey:@"author"];
         detailView.userNameString = [[quotes objectAtIndex:[[self.tableView indexPathForSelectedRow] row]]valueForKey:@"username"];
+        detailView.postID = [[quotes objectAtIndex:[[self.tableView indexPathForSelectedRow] row]]valueForKey:@"objectId"];
     }
 }
 
