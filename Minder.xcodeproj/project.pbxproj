@@ -37,6 +37,7 @@
 		E5998B4B18C799EF00C6FC90 /* AddNewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E5998B4A18C799EF00C6FC90 /* AddNewViewController.m */; };
 		E5998B4D18C7A0AE00C6FC90 /* minder_backgroud.png in Resources */ = {isa = PBXBuildFile; fileRef = E5998B4C18C7A0AE00C6FC90 /* minder_backgroud.png */; };
 		E5998B5018C7DDA100C6FC90 /* CustomTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E5998B4F18C7DDA100C6FC90 /* CustomTableViewCell.m */; };
+		E59C942218CD4D40003519BF /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E59C942118CD4D40003519BF /* Reachability.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,6 +91,8 @@
 		E5998B4C18C7A0AE00C6FC90 /* minder_backgroud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minder_backgroud.png; sourceTree = "<group>"; };
 		E5998B4E18C7DDA100C6FC90 /* CustomTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableViewCell.h; sourceTree = "<group>"; };
 		E5998B4F18C7DDA100C6FC90 /* CustomTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableViewCell.m; sourceTree = "<group>"; };
+		E59C942018CD4D40003519BF /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		E59C942118CD4D40003519BF /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +172,8 @@
 		E5998AF718C78DFB00C6FC90 /* Minder */ = {
 			isa = PBXGroup;
 			children = (
+				E59C942018CD4D40003519BF /* Reachability.h */,
+				E59C942118CD4D40003519BF /* Reachability.m */,
 				E5998B0018C78DFB00C6FC90 /* AppDelegate.h */,
 				E5998B4E18C7DDA100C6FC90 /* CustomTableViewCell.h */,
 				E5998B4F18C7DDA100C6FC90 /* CustomTableViewCell.m */,
@@ -328,6 +333,7 @@
 				E5998B4B18C799EF00C6FC90 /* AddNewViewController.m in Sources */,
 				E5998B0818C78DFB00C6FC90 /* FirstViewController.m in Sources */,
 				E5998B5018C7DDA100C6FC90 /* CustomTableViewCell.m in Sources */,
+				E59C942218CD4D40003519BF /* Reachability.m in Sources */,
 				E5998AFE18C78DFB00C6FC90 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -9,5 +9,10 @@
 #import <UIKit/UIKit.h>
 
 @interface DetailViewController : UIViewController
+@property (weak, nonatomic) IBOutlet UITextView *quoteText;
+@property (weak, nonatomic) IBOutlet UITextField *authorText;
+@property (weak, nonatomic) IBOutlet UISwitch *sharedSwitch;
+@property (weak, nonatomic) IBOutlet UILabel *sharedLabel;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *editSaveButton;
 
 @end

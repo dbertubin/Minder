@@ -7,6 +7,7 @@
 //
 
 #import "MainViewController.h"
+#import "Reachability.h"
 
 @interface MainViewController ()
 
@@ -18,6 +19,8 @@
 @synthesize currentUser;
 @synthesize postedByLabel;
 @synthesize quoteLabel;
+@synthesize reachable;
+
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -32,9 +35,32 @@
 {
     [super viewDidLoad];
     
-
+    // Allocate a reachability object
+    Reachability* reach = [Reachability reachabilityWithHostname:@"www.google.com"];
     
-    [self reloadTable];
+    // Set the blocks
+    reach.reachableBlock = ^(Reachability*reach)
+    {
+        NSLog(@"REACHABLE!");
+        [self reloadTable];
+        
+    };
+    
+    reach.unreachableBlock = ^(Reachability*reach)
+    {
+        NSLog(@"UNREACHABLE!");
+        [[[UIAlertView alloc] initWithTitle:@"Oops! Looks like you are not connected"
+                                    message:@"Please find a network to use this app"
+                                   delegate:nil
+                          cancelButtonTitle:@"ok"
+                          otherButtonTitles:nil] show];
+        
+        
+    };
+    
+    // Start the notifier, which will cause the reachability object to retain itself!
+    [reach startNotifier];
+    
     
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc]
                                         init];
@@ -51,17 +77,19 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
     [self reloadTable];
+    
 }
 
 - (void)reloadTable
 {
-        [self parseQuery];
-        [self.tableView reloadData];
-        if (self.refreshControl.isRefreshing) {
-            NSLog(@"Is refreshing");
-            [self.refreshControl endRefreshing];
-        }
+    [self parseQuery];
+    [self.tableView reloadData];
+    if (self.refreshControl.isRefreshing) {
+        NSLog(@"Is refreshing");
+        [self.refreshControl endRefreshing];
+    }
     
 }
 
@@ -70,11 +98,12 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    
     if (![PFUser currentUser]) { // No user logged in
         // Create the log in view controller
         PFLogInViewController *logInViewController = [[PFLogInViewController alloc] init];
         [logInViewController setDelegate:self]; // Set ourselves as the delegate
-
+        
         
         // Create the sign up view controller
         PFSignUpViewController *signUpViewController = [[PFSignUpViewController alloc] init];
@@ -86,6 +115,7 @@
         // Present the log in view controller
         [self presentViewController:logInViewController animated:YES completion:NULL];
     }
+    
 }
 
 // Sent to the delegate to determine whether the log in request should be submitted to the server.
@@ -172,11 +202,14 @@
 #pragma mark - Parse Query
 -(void)parseQuery;
 {
-//    PFQuery *query = [PFUser query];
+    //    PFQuery *query = [PFUser query];
     PFQuery *quotesFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
-//    [quotesFromCurrentUser whereKey:@"fromUser" equalTo:[PFUser currentUser]];
+    //    [quotesFromCurrentUser whereKey:@"fromUser" equalTo:[PFUser currentUser]];
     //    [quotesFromCurrentUser whereKey:@"status" containsString:@"toDo"];
-    quotes = (NSMutableArray*)[quotesFromCurrentUser findObjects];
+    NSMutableArray * holderForReverseOrder = [[NSMutableArray alloc] init];
+    holderForReverseOrder = (NSMutableArray*)[quotesFromCurrentUser findObjects];
+    quotes =  (NSMutableArray*)[[holderForReverseOrder reverseObjectEnumerator] allObjects];
+    
     NSLog(@"%d", [quotes count]);
 }
 
@@ -207,8 +240,8 @@
     currentUser = [PFUser currentUser];
     
     
-    cell.quoteLabel.text = [[[[quotes reverseObjectEnumerator] allObjects] valueForKey:@"quote"]objectAtIndex:indexPath.row];
-    cell.postedByLabel.text = [[[[quotes reverseObjectEnumerator] allObjects] valueForKey:@"username"]objectAtIndex:indexPath.row];
+    cell.quoteLabel.text = [[quotes valueForKey:@"quote"]objectAtIndex:indexPath.row];
+    cell.postedByLabel.text = [[quotes valueForKey:@"username"]objectAtIndex:indexPath.row];
     return cell;
 }
 
@@ -221,19 +254,40 @@
  }
  */
 
-/*
- // Override to support editing the table view.
- - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
- {
- if (editingStyle == UITableViewCellEditingStyleDelete) {
- // Delete the row from the data source
- [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
- }
- else if (editingStyle == UITableViewCellEditingStyleInsert) {
- // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
- }
- }
- */
+
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Delete the row from the data source
+        
+        PFQuery *quoteFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
+        PFObject *quoteToDelete = [quoteFromCurrentUser getObjectWithId:[[quotes objectAtIndex:indexPath.row]valueForKey:@"objectId"]];
+        
+        NSLog(@"The obeject ID : %@",[[quotes objectAtIndex:indexPath.row]valueForKey:@"objectId"]);
+
+        [quoteToDelete deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (!succeeded) {
+                [[[UIAlertView alloc] initWithTitle:@"Ooops!"
+                                            message:@"Sorry you must be the one who posted to delete a post!"
+                                           delegate:nil
+                                  cancelButtonTitle:@"ok"
+                                  otherButtonTitles:nil] show];
+                [self reloadTable];
+            }else{
+                [quotes removeObjectAtIndex:indexPath.row];
+                
+                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            }
+        }];
+        
+       
+    }
+    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }
+}
+
 
 /*
  // Override to support rearranging the table view.
@@ -251,17 +305,17 @@
  }
  */
 
-/*
- #pragma mark - Navigation
- 
- // In a story board-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
- {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- 
- */
+
+#pragma mark - Navigation
+
+// In a story board-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+
+
 
 
 
