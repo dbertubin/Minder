@@ -23,6 +23,8 @@
 @synthesize leftBarButton;
 @synthesize userNameString;
 @synthesize postID;
+@synthesize deleteAlert;
+@synthesize deleteButton;
 
 - (void)viewDidLoad
 {
@@ -35,10 +37,16 @@
     quoteText.text = quoteString;
     authorText.text = authorString;
     
-    if (![userNameString isEqualToString:[[PFUser currentUser]username]]) {
+    if ([PFAnonymousUtils isLinkedWithUser:[PFUser currentUser]]) {
         self.sharedSwitch.hidden = YES;
         self.editSaveButton.title = @"";
         self.editSaveButton.enabled = NO;
+        self.deleteButton.hidden = YES;
+        
+    } else if ([userNameString isEqualToString:[[PFUser currentUser]username]]){
+        self.sharedSwitch.hidden = YES;
+        self.sharedLabel.hidden = YES;
+        
     }
     
     
@@ -74,7 +82,7 @@
         [self.navigationItem setHidesBackButton:FALSE];
         
     }
-
+    
 }
 
 - (IBAction)onCancel:(UIBarButtonItem *)sender {
@@ -90,36 +98,115 @@
     
 }
 
+- (IBAction)onDeleteClicked:(UIButton *)sender {
+    [self deleteAlert];
+}
+
+
+-(UIAlertView*)deleteAlert
+{
+    deleteAlert = [[UIAlertView alloc]initWithTitle:@"Hold up!" message:@"You sure you want to delete this?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
+    
+    deleteAlert.tag = 1;
+    
+    [deleteAlert show];
+    
+    return deleteAlert;
+    
+}
+
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
+    if (alertView.tag ==0)
+    {
+        //        if (buttonIndex ==1 ) {
+        //            NSMutableString * conCatedStringWithItem1 = [NSMutableString stringWithFormat:@"I just upComplished my goal to %@ using my new app upComplist!",taskNameString];
+        //
+        //
+        //
+        //            [self makePost:conCatedStringWithItem1];
+        //            [self.navigationController popViewControllerAnimated:YES];
+        //        }
+        
+        {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }
+    else if (alertView.tag == 1)
+    {
+        if (buttonIndex ==0)
+        {
+            [deleteAlert dismissWithClickedButtonIndex:0 animated:YES];
+            NSLog(@"Cancel was hit");
+        }
+        else
+        {
+            NSLog(@"Delete  was hit");
+            [self deleteItem];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+        
+    }
+}
+
+
+-(void)deleteItem
+{
+    PFQuery *postFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
+    PFObject *postToDelete = [postFromCurrentUser getObjectWithId:postID];
+    [postToDelete deleteEventually];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
 
 #pragma mark - Save Edit
 - (void)saveParseObject {
     
-    PFACL *defaultACL = [PFACL ACL];
-    [defaultACL setPublicReadAccess:YES];
-    [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
-    
-    
-    PFQuery *postFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
-    
-    // We create a new Parse object and set the data we want to store
-    PFObject *postEdited = [postFromCurrentUser getObjectWithId:postID];
-    
-    [postEdited setObject: quoteText.text forKey:@"quote"];
-    [postEdited setObject: authorText.text forKey:@"author"];
-    
-    if (!self.sharedSwitch.isOn) {
-    
-        PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
-        [postACL setPublicReadAccess:NO];
-        postEdited.ACL = postACL;
-        NSLog(@"Switch is set to off");
+    if (![self.quoteText.text isEqualToString:@""] && ![self.authorText.text isEqualToString:@""]) {
+        PFACL *defaultACL = [PFACL ACL];
+        [defaultACL setPublicReadAccess:YES];
+        [defaultACL setPublicWriteAccess:YES];
+        [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
+        
+        
+        PFQuery *postFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
+        
+        // We create a new Parse object and set the data we want to store
+        PFObject *postEdited = [postFromCurrentUser getObjectWithId:postID];
+        
+        [postEdited setObject: quoteText.text forKey:@"quote"];
+        [postEdited setObject: authorText.text forKey:@"author"];
+        
+        if (!self.sharedSwitch.isOn) {
+            
+            PFACL *postACL = [PFACL ACLWithUser:[PFUser currentUser]];
+            [postACL setPublicReadAccess:NO];
+            [postACL setPublicWriteAccess:NO];
+            postEdited.ACL = postACL;
+            NSLog(@"Switch is set to off");
+        }
+        
+        // Create 1-1 relationship between the current user and the post
+        [postEdited saveEventually:^(BOOL succeeded, NSError *error) {
+            NSLog(@"Object saved to Parse! :)");
+        }];
+        
+    }else if ([self.quoteText.text isEqualToString:@""] && [self.authorText.text isEqualToString:@""]){
+        
+        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Whoa there!" message:@"You didn't fill in the fields. " delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [alert show];
+    } else if ([self.quoteText.text isEqualToString:@""]){
+        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Whoa there!" message:@" Um..unless this is a lesson in zen you need to fill in the quote." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [alert show];
+    } else if ([self.authorText.text isEqualToString:@""]){
+        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Whoa there!" message:@"Please tell us who said the quote" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [alert show];
     }
-    
-    // Create 1-1 relationship between the current user and the post
-    [postEdited saveEventually:^(BOOL succeeded, NSError *error) {
-        NSLog(@"Object saved to Parse! :)");
-    }];
-    
-    
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
 }
 @end

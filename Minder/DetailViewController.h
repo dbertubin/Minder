@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 
-@interface DetailViewController : UIViewController
+@interface DetailViewController : UIViewController <UIAlertViewDelegate>
 @property (weak, nonatomic) IBOutlet UITextView *quoteText;
 @property (weak, nonatomic) IBOutlet UITextField *authorText;
 @property (weak, nonatomic) IBOutlet UISwitch *sharedSwitch;
@@ -20,6 +20,8 @@
 @property (weak, nonatomic) NSString * authorString;
 @property (weak, nonatomic) NSString * userNameString;
 @property (weak, nonatomic) NSString * postID;
+@property (strong, nonatomic) UIAlertView * deleteAlert;
+@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 
 
 @property UIBarButtonItem *leftBarButton;
@@ -27,5 +29,6 @@
 - (IBAction)editSaveItem:(UIBarButtonItem *)sender;
 
 - (IBAction)onCancel:(UIBarButtonItem *)sender;
+- (IBAction)onDeleteClicked:(UIButton *)sender;
 
 @end

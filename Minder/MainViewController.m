@@ -43,7 +43,7 @@
     {
         NSLog(@"REACHABLE!");
         [self reloadTable];
-        
+        [self.view setUserInteractionEnabled:YES];
     };
     
     reach.unreachableBlock = ^(Reachability*reach)
@@ -54,6 +54,7 @@
                                    delegate:nil
                           cancelButtonTitle:@"ok"
                           otherButtonTitles:nil] show];
+//        [self.view setUserInteractionEnabled:NO];
         
         
     };
@@ -203,13 +204,20 @@
 #pragma mark - Parse Query
 -(void)parseQuery;
 {
-    //    PFQuery *query = [PFUser query];
     PFQuery *quotesFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
-    //    [quotesFromCurrentUser whereKey:@"fromUser" equalTo:[PFUser currentUser]];
-    //    [quotesFromCurrentUser whereKey:@"status" containsString:@"toDo"];
-    NSMutableArray * holderForReverseOrder = [[NSMutableArray alloc] init];
-    holderForReverseOrder = (NSMutableArray*)[quotesFromCurrentUser findObjects];
-    quotes =  (NSMutableArray*)[[holderForReverseOrder reverseObjectEnumerator] allObjects];
+
+//    NSMutableArray * holderForReverseOrder = [[NSMutableArray alloc] init];
+//    holderForReverseOrder = (NSMutableArray*)[quotesFromCurrentUser findObjects];
+//    quotes =  (NSMutableArray*)[[holderForReverseOrder reverseObjectEnumerator] allObjects];
+    
+    [quotesFromCurrentUser findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        NSMutableArray * holderForReverseOrder = [[NSMutableArray alloc] init];
+        holderForReverseOrder = (NSMutableArray*)objects;
+        quotes =  (NSMutableArray*)[[holderForReverseOrder reverseObjectEnumerator] allObjects];
+        [self.tableView reloadData];
+        
+    }];
+    
     
     NSLog(@"%d", [quotes count]);
 }

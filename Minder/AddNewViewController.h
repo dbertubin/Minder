@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 #import "MainViewController.h"
+#import "Reachability.h"
 
-@interface AddNewViewController : UIViewController
+@interface AddNewViewController : UIViewController <UIAlertViewDelegate>
 
 - (IBAction)onSavedClicked:(UIButton *)sender;
 - (IBAction)onCancelClicked:(UIButton *)sender;
