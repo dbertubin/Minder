@@ -219,7 +219,7 @@
     }];
     
     
-    NSLog(@"%d", [quotes count]);
+    NSLog(@"%lu", (unsigned long)[quotes count]);
 }
 
 

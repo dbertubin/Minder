@@ -43,7 +43,10 @@
         self.editSaveButton.enabled = NO;
         self.deleteButton.hidden = YES;
         
-    } else if ([userNameString isEqualToString:[[PFUser currentUser]username]]){
+    }
+    
+    if (![userNameString isEqualToString:[[PFUser currentUser]username]]){
+        NSLog(@"%@",userNameString);
         self.sharedSwitch.hidden = YES;
         self.sharedLabel.hidden = YES;
         
