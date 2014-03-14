@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
+#import "Reachability.h"
 
 @interface DetailViewController : UIViewController <UIAlertViewDelegate>
+
+
+@property int reachable;
 @property (weak, nonatomic) IBOutlet UITextView *quoteText;
 @property (weak, nonatomic) IBOutlet UITextField *authorText;
 @property (weak, nonatomic) IBOutlet UISwitch *sharedSwitch;

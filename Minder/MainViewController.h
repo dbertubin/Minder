@@ -13,12 +13,15 @@
 
 @interface MainViewController : UITableViewController <PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate,UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate >
 
-@property bool * reachable;
+@property int reachable;
 @property (weak, nonatomic) IBOutlet UILabel *postedByLabel;
 @property (weak, nonatomic) IBOutlet UILabel *quoteLabel;
 
 @property (strong, nonatomic) NSMutableArray * quotes;
 @property (weak, nonatomic) PFUser * currentUser;
+//@property (strong,nonatomic) UIAlertView * alert;
+@property (weak, nonatomic) IBOutlet UITextView *networkAlert;
+
 
 
 @end

@@ -16,6 +16,7 @@
 - (IBAction)onSavedClicked:(UIButton *)sender;
 - (IBAction)onCancelClicked:(UIButton *)sender;
 
+@property int reachable;
 @property (weak, nonatomic) IBOutlet UITextView *quoteText;
 @property (weak, nonatomic) IBOutlet UITextField *authorText;
 @property (weak, nonatomic) IBOutlet UISwitch *sharedSwitch;

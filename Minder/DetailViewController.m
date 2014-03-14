@@ -25,6 +25,46 @@
 @synthesize postID;
 @synthesize deleteAlert;
 @synthesize deleteButton;
+@synthesize reachable;
+
+- (void)alertShow
+{
+    UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Whoa Buddy!" message:@"Please connect to the internet." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+    [alert show];
+}
+
+- (void)checkRechability
+{
+    // Allocate a reachability object
+    Reachability* reach = [Reachability reachabilityWithHostname:@"www.google.com"];
+    
+    // Set the blocks
+    reach.reachableBlock = ^(Reachability*reach)
+    {
+        NSLog(@"REACHABLE!");
+        reachable = true;
+        if (self.navigationItem.rightBarButtonItem.enabled == NO) {
+            self.navigationItem.rightBarButtonItem.enabled = YES;
+            self.navigationItem.leftBarButtonItem.enabled = YES;
+        }
+      
+        
+    };
+    
+    reach.unreachableBlock = ^(Reachability*reach)
+    {
+        
+        NSLog(@"UNREACHABLE!");
+        reachable = false;
+        self.navigationItem.rightBarButtonItem.enabled = NO;
+        self.navigationItem.leftBarButtonItem.enabled = NO;
+    };
+    
+    // Start the notifier, which will cause the reachability object to retain itself!
+    [reach startNotifier];
+}
+
+
 
 - (void)viewDidLoad
 {
@@ -63,27 +103,34 @@
 
 - (IBAction)editSaveItem:(UIBarButtonItem *)sender {
     
-    if ([self.editSaveButton.title  isEqual: @"Edit"]) {
-        self.editSaveButton.title = @"Save";
-        [self.quoteText setEditable:YES];
-        [self.quoteText becomeFirstResponder];
-        [self.sharedSwitch setEnabled:YES];
-        self.authorText.enabled = YES;
-        [self.navigationItem setHidesBackButton:TRUE];
-        
-        leftBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(onCancel:)];
-        [self.navigationItem setLeftBarButtonItem:leftBarButton];
-        
-        
+    [self checkRechability];
+    
+    if (reachable == true) {
+        if ([self.editSaveButton.title  isEqual: @"Edit"]) {
+            self.editSaveButton.title = @"Save";
+            [self.quoteText setEditable:YES];
+            [self.quoteText becomeFirstResponder];
+            [self.sharedSwitch setEnabled:YES];
+            self.authorText.enabled = YES;
+            [self.navigationItem setHidesBackButton:TRUE];
+            
+            leftBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(onCancel:)];
+            [self.navigationItem setLeftBarButtonItem:leftBarButton];
+            
+            
+        } else {
+            self.editSaveButton.title = @"Edit";
+            [self.quoteText setEditable:NO];
+            [self.quoteText resignFirstResponder];
+            [self.sharedSwitch setEnabled:NO];
+            [self saveParseObject];
+            [self.navigationItem setLeftBarButtonItem:nil];
+            [self.navigationItem setHidesBackButton:FALSE];
+            
+        }
+
     } else {
-        self.editSaveButton.title = @"Edit";
-        [self.quoteText setEditable:NO];
-        [self.quoteText resignFirstResponder];
-        [self.sharedSwitch setEnabled:NO];
-        [self saveParseObject];
-        [self.navigationItem setLeftBarButtonItem:nil];
-        [self.navigationItem setHidesBackButton:FALSE];
-        
+        [self alertShow];
     }
     
 }
@@ -124,15 +171,6 @@
     
     if (alertView.tag ==0)
     {
-        //        if (buttonIndex ==1 ) {
-        //            NSMutableString * conCatedStringWithItem1 = [NSMutableString stringWithFormat:@"I just upComplished my goal to %@ using my new app upComplist!",taskNameString];
-        //
-        //
-        //
-        //            [self makePost:conCatedStringWithItem1];
-        //            [self.navigationController popViewControllerAnimated:YES];
-        //        }
-        
         {
             [self.navigationController popViewControllerAnimated:YES];
         }
