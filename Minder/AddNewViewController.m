@@ -69,6 +69,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self checkRechability];
     
     self.quoteText.backgroundColor = [UIColor clearColor];
     self.authorText.backgroundColor = [UIColor clearColor];

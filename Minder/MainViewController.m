@@ -316,33 +316,36 @@
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        
-        PFQuery *quoteFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
-        PFObject *quoteToDelete = [quoteFromCurrentUser getObjectWithId:[[quotes objectAtIndex:indexPath.row]valueForKey:@"objectId"]];
-        
-        NSLog(@"The obeject ID : %@",[[quotes objectAtIndex:indexPath.row]valueForKey:@"objectId"]);
-        if ([PFAnonymousUtils isLinkedWithUser:[PFUser currentUser]]) {
-            [[[UIAlertView alloc] initWithTitle:@"Ooops!"
-                                        message:@"Sorry you must be logged in to delete a post!"
-                                       delegate:nil
-                              cancelButtonTitle:@"ok"
-                              otherButtonTitles:nil] show];
-            [self reloadTable];
-        }else{
-            [quoteToDelete deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [self checkRechability];
+    if (reachable == true) {
+        if (editingStyle == UITableViewCellEditingStyleDelete) {
+            // Delete the row from the data source
+            
+            PFQuery *quoteFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
+            PFObject *quoteToDelete = [quoteFromCurrentUser getObjectWithId:[[quotes objectAtIndex:indexPath.row]valueForKey:@"objectId"]];
+            
+            NSLog(@"The obeject ID : %@",[[quotes objectAtIndex:indexPath.row]valueForKey:@"objectId"]);
+            if ([PFAnonymousUtils isLinkedWithUser:[PFUser currentUser]]) {
+                [[[UIAlertView alloc] initWithTitle:@"Ooops!"
+                                            message:@"Sorry you must be logged in to delete a post!"
+                                           delegate:nil
+                                  cancelButtonTitle:@"ok"
+                                  otherButtonTitles:nil] show];
+                [self reloadTable];
+            }else{
+                [quoteToDelete deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    
+                }];
                 
-            }];
+                [quotes removeObjectAtIndex:indexPath.row];
+                
+                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            }
             
-            [quotes removeObjectAtIndex:indexPath.row];
-            
-            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
-        
-    }
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+
+    }else{
+        [self alertShow];
     }
 }
 

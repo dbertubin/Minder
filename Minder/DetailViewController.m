@@ -46,6 +46,7 @@
         if (self.navigationItem.rightBarButtonItem.enabled == NO) {
             self.navigationItem.rightBarButtonItem.enabled = YES;
             self.navigationItem.leftBarButtonItem.enabled = YES;
+//            [self.deleteButton setEnabled:YES];
         }
       
         
@@ -58,6 +59,7 @@
         reachable = false;
         self.navigationItem.rightBarButtonItem.enabled = NO;
         self.navigationItem.leftBarButtonItem.enabled = NO;
+//        [self.deleteButton setEnabled:NO];
     };
     
     // Start the notifier, which will cause the reachability object to retain itself!
@@ -70,6 +72,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    [self checkRechability];
     [self.quoteText setEditable:NO];
     self.authorText.enabled = NO;
     [self.sharedSwitch setEnabled:NO];
@@ -95,6 +99,12 @@
     
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+        [self checkRechability];
+
+}
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -111,6 +121,7 @@
             [self.quoteText setEditable:YES];
             [self.quoteText becomeFirstResponder];
             [self.sharedSwitch setEnabled:YES];
+            [self.deleteButton setEnabled:YES];
             self.authorText.enabled = YES;
             [self.navigationItem setHidesBackButton:TRUE];
             
@@ -123,6 +134,7 @@
             [self.quoteText setEditable:NO];
             [self.quoteText resignFirstResponder];
             [self.sharedSwitch setEnabled:NO];
+            [self.deleteButton setEnabled:NO];
             [self saveParseObject];
             [self.navigationItem setLeftBarButtonItem:nil];
             [self.navigationItem setHidesBackButton:FALSE];
@@ -149,7 +161,13 @@
 }
 
 - (IBAction)onDeleteClicked:(UIButton *)sender {
+    [self checkRechability];
+    if (reachable == false) {
+        [self alertShow];
+    } else {
+    
     [self deleteAlert];
+    }
 }
 
 
