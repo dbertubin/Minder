@@ -27,6 +27,7 @@ public class MainActivity extends Activity {
 	ListView _listView;
 	Context _context;
 	ArrayList<String> _quotes = new ArrayList<String>();
+	CustomParseQueryAdapter _adapter;
 
 
 	@Override
@@ -43,30 +44,34 @@ public class MainActivity extends Activity {
 
 		} else {
 
-			setContentView(R.layout.activity_main);
-
-
-
-			CustomParseQueryAdapter adapter =
-					new CustomParseQueryAdapter(this, new ParseQueryAdapter.QueryFactory<ParseObject>() {
-						public ParseQuery<ParseObject> create() {
-							// Here we can configure a ParseQuery to our heart's desire.
-							ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Quote");
-							// This sorts by time updated so if a user updates it will push to the top .. this does not happen 
-							// in IOS yet
-							query.addDescendingOrder("updatedAt");
-							return query;
-						}
-					});
-
-
-			ListView listView = (ListView) findViewById(R.id.listView);
-			listView.setAdapter(adapter);
-
+			showData();
 		}
-
 	}
 
+	private void showData() {
+		setContentView(R.layout.activity_main);
+		_adapter = new CustomParseQueryAdapter(this, new ParseQueryAdapter.QueryFactory<ParseObject>() {
+					public ParseQuery<ParseObject> create() {
+						// Here we can configure a ParseQuery to our heart's desire.
+						ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Quote");
+						// This sorts by time updated so if a user updates it will push to the top .. this does not happen 
+						// in IOS yet
+						query.addDescendingOrder("updatedAt");
+						return query;
+					}
+				});
+
+		ListView listView = (ListView) findViewById(R.id.listView);
+		listView.setAdapter(_adapter);
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		showData();
+	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
