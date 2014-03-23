@@ -1,21 +1,19 @@
 package com.example.minder;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.parse.FindCallback;
 import com.parse.Parse;
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
@@ -28,6 +26,7 @@ public class MainActivity extends Activity {
 	Context _context;
 	ArrayList<String> _quotes = new ArrayList<String>();
 	CustomParseQueryAdapter _adapter;
+	ParseQuery<ParseObject> _query;
 
 
 	@Override
@@ -53,16 +52,34 @@ public class MainActivity extends Activity {
 		_adapter = new CustomParseQueryAdapter(this, new ParseQueryAdapter.QueryFactory<ParseObject>() {
 					public ParseQuery<ParseObject> create() {
 						// Here we can configure a ParseQuery to our heart's desire.
-						ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Quote");
+						_query = new ParseQuery<ParseObject>("Quote");
 						// This sorts by time updated so if a user updates it will push to the top .. this does not happen 
 						// in IOS yet
-						query.addDescendingOrder("updatedAt");
-						return query;
+						_query.addDescendingOrder("updatedAt");
+						return _query;
 					}
 				});
 
-		ListView listView = (ListView) findViewById(R.id.listView);
-		listView.setAdapter(_adapter);
+		_listView = (ListView) findViewById(R.id.listView);
+		_listView.setAdapter(_adapter);
+		
+		_listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+					long arg3) {
+				// TODO Auto-generated method stub
+				Intent showDetail = new Intent(MainActivity.this, DetailActivity.class);
+				ParseObject quote = _adapter.getItem(position);
+				showDetail.putExtra("username", quote.getString("username"));
+				showDetail.putExtra("quote", quote.getString("quote"));
+				showDetail.putExtra("author", quote.getString("author"));
+				showDetail.putExtra("objectId", quote.getString("objectId"));	
+				showDetail.putExtra("username", quote.getString("username"));
+				startActivity(showDetail);
+			}
+		});
+		
 	}
 
 	@Override
@@ -87,7 +104,6 @@ public class MainActivity extends Activity {
 			startActivity(addNew);
 		} else if (item.getItemId() == R.id.action_logout) {
 			ParseUser.logOut();
-			
 			Intent showLogin = new Intent(MainActivity.this, LoginOrSignUpActivity.class);
 			startActivity(showLogin);
 			finish();
