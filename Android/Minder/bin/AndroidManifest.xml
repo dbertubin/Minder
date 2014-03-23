@@ -28,6 +28,8 @@
         <activity android:name="LoginOrSignUpActivity"></activity>
         <activity android:name="LoginActivity"></activity>
         <activity android:name="SignUpActivity"></activity>
+        <activity android:name="AddNewQuoteActivity"></activity>
+        <activity android:name="DetailActivity"></activity>
     </application>
 
 </manifest>

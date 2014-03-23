@@ -1,7 +1,6 @@
 package com.example.minder;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,12 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.ArrayAdapter;
+import android.view.MenuItem;
 import android.widget.ListView;
 
-import com.parse.FindCallback;
 import com.parse.Parse;
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
@@ -25,7 +22,8 @@ public class MainActivity extends Activity {
 	ListView _listView;
 	Context _context;
 	ArrayList<String> _quotes = new ArrayList<String>();
-
+	CustomParseQueryAdapter adapter;
+	ParseUser currentUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +32,9 @@ public class MainActivity extends Activity {
 
 
 		// Check to see if user is logged in .. if they are then display if not show LoginOrSignUp ... 
-		ParseUser currentUser = ParseUser.getCurrentUser();
+		currentUser = ParseUser.getCurrentUser();
 		if (currentUser == null) {
-
+			Log.i("Current USER ", ParseUser.getCurrentUser().toString());
 			startActivity(new Intent(MainActivity.this, LoginOrSignUpActivity.class));
 
 		} else {
@@ -45,8 +43,7 @@ public class MainActivity extends Activity {
 
 
 
-			CustomParseQueryAdapter adapter =
-					new CustomParseQueryAdapter(this, new ParseQueryAdapter.QueryFactory<ParseObject>() {
+			adapter = new CustomParseQueryAdapter(this, new ParseQueryAdapter.QueryFactory<ParseObject>() {
 						public ParseQuery<ParseObject> create() {
 							// Here we can configure a ParseQuery to our heart's desire.
 							ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Quote");
@@ -54,25 +51,19 @@ public class MainActivity extends Activity {
 						}
 					});
 
-			//			ParseQueryAdapter<ParseObject> adapter = new ParseQueryAdapter<ParseObject>(this, "Quote");
-			//			adapter.setTextKey("quote");
-			//			//			  adapter.setImageKey("photo");
-
 			ListView listView = (ListView) findViewById(R.id.listView);
 			listView.setAdapter(adapter);
 
 		}
 
 	}
-
-
-
-
-
-	//		_context = this;
-	//		_listView = (ListView) findViewById(R.id.listView);
-	//		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, _quotes);
-	//		_listView.setAdapter(arrayAdapter); 
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		adapter.notifyDataSetChanged();
+	}
 
 
 	@Override
@@ -82,4 +73,18 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+
+		if (item.getItemId() == R.id.action_add) {
+			Intent addNew = new Intent(MainActivity.this, AddNewQuoteActivity.class);
+			startActivity(addNew);		
+			} else if (item.getItemId() == R.id.action_logout) {
+//				ParseUser.logOut();
+			}
+		return super.onOptionsItemSelected(item);
+
+	}
 }
