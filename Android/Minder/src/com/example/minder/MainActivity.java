@@ -52,6 +52,9 @@ public class MainActivity extends Activity {
 						public ParseQuery<ParseObject> create() {
 							// Here we can configure a ParseQuery to our heart's desire.
 							ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Quote");
+							// This sorts by time updated so if a user updates it will push to the top .. this does not happen 
+							// in IOS yet
+							query.addDescendingOrder("updatedAt");
 							return query;
 						}
 					});

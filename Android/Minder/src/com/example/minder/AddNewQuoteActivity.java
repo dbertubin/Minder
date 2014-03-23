@@ -50,19 +50,19 @@ public class AddNewQuoteActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				ParseObject quoteObject = new ParseObject("Quote");
-				ParseACL postACL = new ParseACL(ParseUser.getCurrentUser());
+				ParseACL quoteACL = new ParseACL(ParseUser.getCurrentUser());
 				if (shared == true) {
-					postACL.setPublicReadAccess(true);	
-					postACL.setPublicWriteAccess(true);
+					quoteACL.setPublicReadAccess(true);	
+					quoteACL.setPublicWriteAccess(true);
 				} else {
-					postACL.setPublicReadAccess(false);	
-					postACL.setPublicWriteAccess(false);
+					quoteACL.setPublicReadAccess(false);	
+					quoteACL.setPublicWriteAccess(false);
 				}
-				quoteObject.setACL(postACL);
+				quoteObject.setACL(quoteACL);
 				quoteObject.put("quote", quote.getText().toString());
 				quoteObject.put("author", author.getText().toString());
 				quoteObject.put("fromUser", ParseUser.getCurrentUser());
-				quoteObject.put("userName", ParseUser.getCurrentUser().toString());
+				quoteObject.put("username", ParseUser.getCurrentUser().get("username"));
 				quoteObject.saveEventually();
 				finish();
 			}
