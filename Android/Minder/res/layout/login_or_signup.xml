@@ -27,7 +27,14 @@
         android:layout_below="@id/logInButton"
         android:text="Sign Up" />
 
-    
-
+    <Button
+        android:id="@+id/skipButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/signUpButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/signUpButton"
+        android:layout_marginBottom="52dp"
+        android:text="View as Guest" />
 
 </RelativeLayout>

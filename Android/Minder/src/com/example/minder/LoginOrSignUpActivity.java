@@ -3,9 +3,15 @@ package com.example.minder;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+
+import com.parse.LogInCallback;
+import com.parse.ParseAnonymousUtils;
+import com.parse.ParseException;
+import com.parse.ParseUser;
 
 public class LoginOrSignUpActivity extends Activity{
 
@@ -31,6 +37,28 @@ public class LoginOrSignUpActivity extends Activity{
 	        startActivity(new Intent(LoginOrSignUpActivity.this, SignUpActivity.class));
 	      }
 	    });
+	    
+	  //SkipButton 
+		  ((Button) findViewById(R.id.skipButton)).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ParseAnonymousUtils.logIn(new LogInCallback() {
+					  @Override
+					  public void done(ParseUser user, ParseException e) {
+					    if (e != null) {
+					      Log.d("MyApp", "Anonymous login failed.");
+					    } else {
+					    	startActivity(new Intent(LoginOrSignUpActivity.this, MainActivity.class));
+					    	Log.d("MyApp", "Anonymous user logged in.");
+					    }
+					  }
+					});// TODO Auto-generated method stub
+				
+			}
+		});
 	  }
+	  
+	  
 
 }

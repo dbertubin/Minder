@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.parse.Parse;
@@ -21,7 +22,6 @@ import com.parse.ParseUser;
 
 public class MainActivity extends Activity {
 
-	private static final int REQUEST_CODE = 0;
 	ListView _listView;
 	Context _context;
 	ArrayList<String> _quotes = new ArrayList<String>();
@@ -42,7 +42,6 @@ public class MainActivity extends Activity {
 			startActivity(new Intent(MainActivity.this, LoginOrSignUpActivity.class));
 
 		} else {
-
 			showData();
 		}
 	}
@@ -74,9 +73,21 @@ public class MainActivity extends Activity {
 				showDetail.putExtra("username", quote.getString("username"));
 				showDetail.putExtra("quote", quote.getString("quote"));
 				showDetail.putExtra("author", quote.getString("author"));
-				showDetail.putExtra("objectId", quote.getString("objectId"));	
+				showDetail.putExtra("objectId", quote.getObjectId());	
 				showDetail.putExtra("username", quote.getString("username"));
 				startActivity(showDetail);
+			}
+		});
+		
+		_listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int position, long arg3) {
+				ParseObject quote = _adapter.getItem(position);
+				quote.deleteEventually();
+				
+				return false;
 			}
 		});
 		
