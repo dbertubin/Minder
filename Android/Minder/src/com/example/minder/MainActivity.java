@@ -15,10 +15,13 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
+import com.parse.PushService;
 
 public class MainActivity extends Activity {
 
@@ -27,20 +30,26 @@ public class MainActivity extends Activity {
 	ArrayList<String> _quotes = new ArrayList<String>();
 	CustomParseQueryAdapter _adapter;
 	ParseQuery<ParseObject> _query;
+	Boolean _connected;
+	int _oldCount;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Parse.initialize(this, "CzPCqiJgXVlhAV9gCBdOMHvDtpUX4Hn0P83mH4Gh", "dSylRqP3qvFfyTZfuEG6unKc5Sj5DuRtKjkCvLjD");
-
-
+		
+		
+		PushService.setDefaultPushCallback(this, MainActivity.class);
+		ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+		installation.put("user",ParseUser.getCurrentUser());
+		installation.saveInBackground();
+		PushService.subscribe(MainActivity.this, "updates", MainActivity.class);
+		
 		// Check to see if user is logged in .. if they are then display if not show LoginOrSignUp ... 
 		ParseUser currentUser = ParseUser.getCurrentUser();
 		if (currentUser == null) {
-
 			startActivity(new Intent(MainActivity.this, LoginOrSignUpActivity.class));
-
 		} else {
 			showData();
 		}
@@ -48,6 +57,7 @@ public class MainActivity extends Activity {
 
 	private void showData() {
 		setContentView(R.layout.activity_main);
+		
 		_adapter = new CustomParseQueryAdapter(this, new ParseQueryAdapter.QueryFactory<ParseObject>() {
 					public ParseQuery<ParseObject> create() {
 						// Here we can configure a ParseQuery to our heart's desire.
@@ -58,7 +68,7 @@ public class MainActivity extends Activity {
 						return _query;
 					}
 				});
-
+		
 		_listView = (ListView) findViewById(R.id.listView);
 		_listView.setAdapter(_adapter);
 		
@@ -98,8 +108,28 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		showData();
+//		_query = new ParseQuery<ParseObject>("Quote");
+//		try {
+//			if (_query.count()>_oldCount) {
+//				showData();
+//			}
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		try {
+			_oldCount= _query.count();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,8 +149,6 @@ public class MainActivity extends Activity {
 			startActivity(showLogin);
 			finish();
 		}
-		
 		return super.onOptionsItemSelected(item);
-	}
-	
+	}	
 }

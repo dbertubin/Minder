@@ -82,12 +82,11 @@ public class DetailActivity extends Activity{
 				// TODO Auto-generated method stub
 				Log.i("Detail is HIT", "BOYAKAH");
 				ParseQuery<ParseObject> query = ParseQuery.getQuery("Quote");
-
 				query.getInBackground(_objectId, new GetCallback<ParseObject>() {
 					public void done(ParseObject quoteObject, ParseException e) {
 						if (e == null) {
 							ParseACL postACL = new ParseACL(ParseUser.getCurrentUser());
-							if (_shared == true) {
+							if (_shareButton.isChecked()) {
 								postACL.setPublicReadAccess(true);	
 								postACL.setPublicWriteAccess(true);
 							} else {

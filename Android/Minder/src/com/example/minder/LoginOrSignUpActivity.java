@@ -50,7 +50,6 @@ public class LoginOrSignUpActivity extends Activity{
 					      Log.d("MyApp", "Anonymous login failed.");
 					    } else {
 					    	startActivity(new Intent(LoginOrSignUpActivity.this, MainActivity.class));
-					    	Log.d("MyApp", "Anonymous user logged in.");
 					    }
 					  }
 					});// TODO Auto-generated method stub

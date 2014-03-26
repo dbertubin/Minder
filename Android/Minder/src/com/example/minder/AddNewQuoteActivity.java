@@ -12,6 +12,7 @@ import android.widget.ToggleButton;
 
 import com.parse.ParseACL;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 
 public class AddNewQuoteActivity extends Activity {
@@ -21,7 +22,7 @@ public class AddNewQuoteActivity extends Activity {
 	private Button saveButton;
 	private Button cancelButton;
 	private ToggleButton shareButton;
-	private Boolean shared;
+	Boolean shared;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +52,11 @@ public class AddNewQuoteActivity extends Activity {
 				// TODO Auto-generated method stub
 				ParseObject quoteObject = new ParseObject("Quote");
 				ParseACL quoteACL = new ParseACL(ParseUser.getCurrentUser());
-				if (shared == true) {
+				if (shareButton.isChecked()) {
 					quoteACL.setPublicReadAccess(true);	
 					quoteACL.setPublicWriteAccess(true);
 				} else {
+				
 					quoteACL.setPublicReadAccess(false);	
 					quoteACL.setPublicWriteAccess(false);
 				}
@@ -64,6 +66,15 @@ public class AddNewQuoteActivity extends Activity {
 				quoteObject.put("fromUser", ParseUser.getCurrentUser());
 				quoteObject.put("username", ParseUser.getCurrentUser().get("username"));
 				quoteObject.saveEventually();
+				
+				
+				ParsePush push = new ParsePush();
+				String message = quote.getText().toString();
+				push.setChannel("updates");
+				push.setMessage(message);
+				push.sendInBackground();
+				
+				
 				finish();
 			}
 		});

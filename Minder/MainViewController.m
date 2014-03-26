@@ -251,6 +251,7 @@
 -(void)parseQuery;
 {
     PFQuery *quotesFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
+    [quotesFromCurrentUser orderByAscending:@"updatedAt"];
     
     //    NSMutableArray * holderForReverseOrder = [[NSMutableArray alloc] init];
     //    holderForReverseOrder = (NSMutableArray*)[quotesFromCurrentUser findObjects];
