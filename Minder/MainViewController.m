@@ -42,6 +42,8 @@
 }
 
 
+
+
 - (void)alertShow
 {
     UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Whoa Buddy!" message:@"Please connect to the internet." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
@@ -87,7 +89,7 @@
     [super viewDidLoad];
     
     [self checkRechability];
-    
+    [self startPolling];
     
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc]
                                         init];
@@ -354,6 +356,29 @@
         [self alertShow];
     }
 }
+
+#pragma mark -TIMER FOR POLLING
+- (void) startPolling {
+    [NSTimer scheduledTimerWithTimeInterval:5
+                                     target:self
+                                   selector:@selector(tick:)
+                                   userInfo:nil
+                                    repeats:YES];
+}
+
+- (void) tick:(NSTimer *) timer {
+    //do something here..
+    PFQuery * queryCheck = [PFQuery queryWithClassName:@"Quote"];
+    queryCheck.cachePolicy = kPFCachePolicyIgnoreCache;
+    [queryCheck findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (objects.count > quotes.count) {
+            [self reloadTable];
+            NSLog(@"Test this out");
+        }
+    }];
+    
+   }
+
 
 
 /*
