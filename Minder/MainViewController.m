@@ -21,6 +21,7 @@
 @synthesize quoteLabel;
 @synthesize reachable;
 @synthesize networkAlert;
+@synthesize query = _query;
 
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -41,13 +42,10 @@
 }
 
 
-
-
-
 - (void)alertShow
 {
     UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Whoa Buddy!" message:@"Please connect to the internet." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-        [alert show];
+    [alert show];
 }
 
 - (void)checkRechability
@@ -73,11 +71,11 @@
         
         NSLog(@"UNREACHABLE!");
         reachable = false;
-        self.navigationItem.rightBarButtonItem.enabled = NO;
-        self.navigationItem.leftBarButtonItem.enabled = NO;
-        if (self.refreshControl.isRefreshing) {
-
-        }
+        //        self.navigationItem.rightBarButtonItem.enabled = NO;
+        //        self.navigationItem.leftBarButtonItem.enabled = NO;
+        //        if (self.refreshControl.isRefreshing) {
+        //
+        //        }
     };
     
     // Start the notifier, which will cause the reachability object to retain itself!
@@ -95,11 +93,11 @@
                                         init];
     self.refreshControl = refreshControl;
     
+    
     [refreshControl addTarget:self action:@selector(reloadTable) forControlEvents:UIControlEventValueChanged];
     [self setRefreshControl:refreshControl];
     
-    
-    
+
     // Uncomment the following line to preserve selection between presentations.
     //     self.clearsSelectionOnViewWillAppear = NO;
     
@@ -112,26 +110,32 @@
     
     [self checkRechability];
     [self reloadTable];
+    
 }
 
 - (void)reloadTable
 {
-    if (reachable == true) {
-        [self parseQuery];
-        [self.tableView reloadData];
-        if (self.refreshControl.isRefreshing) {
-            NSLog(@"Is refreshing");
-            [self.refreshControl endRefreshing];
-            NSLog(@"Stopped refreshing");
-        }
-    }else {
-        [self alertShow];
-        if (self.refreshControl.isRefreshing) {
-            NSLog(@"Is refreshing");
-            [self.refreshControl endRefreshing];
-            NSLog(@"Stopped refreshing");
-        }
+    
+    //    if (reachable == true) {
+    [self parseQuery];
+    [self.tableView reloadData];
+    //    } else {
+    //        [self.tableView reloadData];
+    //    }
+    
+    if (self.refreshControl.isRefreshing) {
+        NSLog(@"Is refreshing");
+        [self.refreshControl endRefreshing];
+        NSLog(@"Stopped refreshing");
     }
+    //    }else {
+    //        [self alertShow];
+    //        if (self.refreshControl.isRefreshing) {
+    //            NSLog(@"Is refreshing");
+    //            [self.refreshControl endRefreshing];
+    //            NSLog(@"Stopped refreshing");
+    //        }
+    //    }
     
 }
 
@@ -250,14 +254,10 @@
 #pragma mark - Parse Query
 -(void)parseQuery;
 {
-    PFQuery *quotesFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
-    [quotesFromCurrentUser orderByAscending:@"updatedAt"];
-    
-    //    NSMutableArray * holderForReverseOrder = [[NSMutableArray alloc] init];
-    //    holderForReverseOrder = (NSMutableArray*)[quotesFromCurrentUser findObjects];
-    //    quotes =  (NSMutableArray*)[[holderForReverseOrder reverseObjectEnumerator] allObjects];
-    
-    [quotesFromCurrentUser findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+    _query = [PFQuery queryWithClassName:@"Quote"];
+    _query.cachePolicy = kPFCachePolicyNetworkElseCache;
+    [_query orderByAscending:@"updatedAt"];
+    [_query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         NSMutableArray * holderForReverseOrder = [[NSMutableArray alloc] init];
         holderForReverseOrder = (NSMutableArray*)objects;
         quotes = (NSMutableArray*)[[holderForReverseOrder reverseObjectEnumerator] allObjects];
@@ -269,10 +269,7 @@
     NSLog(@"%lu", (unsigned long)[quotes count]);
 }
 
-
-
-
-
+    
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -318,33 +315,41 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self checkRechability];
-    if (reachable == true) {
-        if (editingStyle == UITableViewCellEditingStyleDelete) {
-            // Delete the row from the data source
+    
+    
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Delete the row from the data source
+        
+        PFObject *quoteToDelete = [_query getObjectWithId:[[quotes objectAtIndex:indexPath.row]valueForKey:@"objectId"]];
+        
+        if ([PFAnonymousUtils isLinkedWithUser:[PFUser currentUser]]) {
+            [[[UIAlertView alloc] initWithTitle:@"Ooops!"
+                                        message:@"Sorry you must be logged in to delete a post!"
+                                       delegate:nil
+                              cancelButtonTitle:@"ok"
+                              otherButtonTitles:nil] show];
+            [self reloadTable];
+        }else{
             
-            PFQuery *quoteFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
-            PFObject *quoteToDelete = [quoteFromCurrentUser getObjectWithId:[[quotes objectAtIndex:indexPath.row]valueForKey:@"objectId"]];
-            
-            NSLog(@"The obeject ID : %@",[[quotes objectAtIndex:indexPath.row]valueForKey:@"objectId"]);
-            if ([PFAnonymousUtils isLinkedWithUser:[PFUser currentUser]]) {
-                [[[UIAlertView alloc] initWithTitle:@"Ooops!"
-                                            message:@"Sorry you must be logged in to delete a post!"
-                                           delegate:nil
-                                  cancelButtonTitle:@"ok"
-                                  otherButtonTitles:nil] show];
+            if (reachable) {
+                NSLog(@"Reachable");
+                [quotes removeObjectAtIndex:indexPath.row];
+                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                [quoteToDelete deleteInBackground];
                 [self reloadTable];
-            }else{
-                [quoteToDelete deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    
-                }];
                 
+            } else {
+                [quoteToDelete deleteEventually];
                 [quotes removeObjectAtIndex:indexPath.row];
                 
+                
                 [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                
             }
             
+            
         }
-
+        
     }else{
         [self alertShow];
     }

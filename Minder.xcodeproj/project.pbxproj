@@ -172,13 +172,13 @@
 		E5998AF718C78DFB00C6FC90 /* Minder */ = {
 			isa = PBXGroup;
 			children = (
+				E5998B0318C78DFB00C6FC90 /* Main.storyboard */,
 				E59C942018CD4D40003519BF /* Reachability.h */,
 				E59C942118CD4D40003519BF /* Reachability.m */,
 				E5998B0018C78DFB00C6FC90 /* AppDelegate.h */,
+				E5998B0118C78DFB00C6FC90 /* AppDelegate.m */,
 				E5998B4E18C7DDA100C6FC90 /* CustomTableViewCell.h */,
 				E5998B4F18C7DDA100C6FC90 /* CustomTableViewCell.m */,
-				E5998B0118C78DFB00C6FC90 /* AppDelegate.m */,
-				E5998B0318C78DFB00C6FC90 /* Main.storyboard */,
 				E5998B2918C78EB300C6FC90 /* DetailViewController.h */,
 				E5998B2A18C78EB300C6FC90 /* DetailViewController.m */,
 				E5998B2C18C78F3B00C6FC90 /* MainViewController.h */,

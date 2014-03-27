@@ -13,8 +13,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    [Parse setApplicationId:@"CzPCqiJgXVlhAV9gCBdOMHvDtpUX4Hn0P83mH4Gh"
-                  clientKey:@"dSylRqP3qvFfyTZfuEG6unKc5Sj5DuRtKjkCvLjD"];
+    [Parse setApplicationId:@"CPiLmo26xJ7gbZF6SrmNN9heZcXGyLkTOcu5QStw  "
+                  clientKey:@"tKczmTHzK3s2S4dDp8valehdT6teSBdOv9E93rzy"];
     
     [application registerForRemoteNotificationTypes:
      UIRemoteNotificationTypeBadge |
@@ -26,7 +26,7 @@
 
 
 - (void)application:(UIApplication *)application
-    didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken {
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken {
     // Store the deviceToken in the current installation and save it to Parse.
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     [currentInstallation setDeviceTokenFromData:newDeviceToken];
@@ -37,10 +37,12 @@
 
 
 - (void)application:(UIApplication *)application
-    didReceiveRemoteNotification:(NSDictionary *)userInfo {
+didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [PFPush handlePush:userInfo];
+    MainViewController * mvc = [[MainViewController alloc] init];
+    [mvc reloadTable];
+    
 }
-
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
@@ -56,12 +58,17 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
+    
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    MainViewController * mvc = [[MainViewController alloc] init];
+    [mvc reloadTable];
+
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

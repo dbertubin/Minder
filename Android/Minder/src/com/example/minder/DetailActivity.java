@@ -1,4 +1,4 @@
-package com.example.minder;
+	package com.example.minder;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.widget.ToggleButton;
 
 import com.parse.GetCallback;
 import com.parse.ParseACL;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -41,11 +42,8 @@ public class DetailActivity extends Activity{
 
 		_currentUser = ParseUser.getCurrentUser();
 
-
-
 		_quote = (EditText)findViewById(R.id.quote);
 		_author  = (EditText)findViewById(R.id.author);
-
 
 		_intent = getIntent();
 
@@ -53,10 +51,6 @@ public class DetailActivity extends Activity{
 		Log.i("ID", _objectId);
 		_quote.setText(_intent.getStringExtra("quote"));
 		_author.setText(_intent.getStringExtra("author"));
-
-
-
-
 
 		_shareButton = (ToggleButton) findViewById(R.id.shareButton);
 
@@ -70,9 +64,7 @@ public class DetailActivity extends Activity{
 			}
 		});
 
-
-
-
+		
 		_saveButton = (Button)findViewById(R.id.saveButton);
 
 		_saveButton.setOnClickListener(new OnClickListener() {

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 #import "Reachability.h"
+#import "MainViewController.h"
 
 @interface DetailViewController : UIViewController <UIAlertViewDelegate>
 

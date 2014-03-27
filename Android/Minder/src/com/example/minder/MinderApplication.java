@@ -7,7 +7,7 @@ import com.parse.Parse;
 public class MinderApplication extends Application {
 
 	public void onCreate() {
-		  Parse.initialize(this, "CzPCqiJgXVlhAV9gCBdOMHvDtpUX4Hn0P83mH4Gh", "dSylRqP3qvFfyTZfuEG6unKc5Sj5DuRtKjkCvLjD");
+		  Parse.initialize(this, "CPiLmo26xJ7gbZF6SrmNN9heZcXGyLkTOcu5QStw", "tKczmTHzK3s2S4dDp8valehdT6teSBdOv9E93rzy");
 		}
 	
 	

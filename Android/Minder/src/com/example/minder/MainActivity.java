@@ -1,9 +1,13 @@
 package com.example.minder;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,12 +17,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.PushService;
@@ -31,13 +36,27 @@ public class MainActivity extends Activity {
 	CustomParseQueryAdapter _adapter;
 	ParseQuery<ParseObject> _query;
 	Boolean _connected;
+	Timer _timer;
 	int _oldCount;
+	int _position;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Parse.initialize(this, "CzPCqiJgXVlhAV9gCBdOMHvDtpUX4Hn0P83mH4Gh", "dSylRqP3qvFfyTZfuEG6unKc5Sj5DuRtKjkCvLjD");
+		
+		
+	
+		Timer showTimer = new Timer();
+		showTimer.schedule(new TimerTask() {			
+			@Override
+			public void run() {
+				TimerMethod();
+			}
+			
+		}, 0, 3000);
+	
+		
 		
 		
 		PushService.setDefaultPushCallback(this, MainActivity.class);
@@ -61,7 +80,16 @@ public class MainActivity extends Activity {
 		_adapter = new CustomParseQueryAdapter(this, new ParseQueryAdapter.QueryFactory<ParseObject>() {
 					public ParseQuery<ParseObject> create() {
 						// Here we can configure a ParseQuery to our heart's desire.
-						_query = new ParseQuery<ParseObject>("Quote");
+						 
+						 _query = new ParseQuery<ParseObject>("Quote");
+						 _query.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
+						 try {
+							_oldCount = _query.count();
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
 						// This sorts by time updated so if a user updates it will push to the top .. this does not happen 
 						// in IOS yet
 						_query.addDescendingOrder("updatedAt");
@@ -94,41 +122,85 @@ public class MainActivity extends Activity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
-				ParseObject quote = _adapter.getItem(position);
-				quote.deleteEventually();
 				
+				_position = position;
+				
+				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+						MainActivity.this);
+		 
+					// set title
+					alertDialogBuilder.setTitle("Whoa!");
+		 
+					// set dialog message
+					alertDialogBuilder
+						.setMessage("Do you really want to delete?")
+						.setCancelable(false)
+						.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,int id) {
+								// if this button is clicked, close
+								// current activity
+								ParseObject quote = _adapter.getItem(_position);
+								quote.deleteEventually();
+								dialog.cancel();
+							}
+						  })
+						.setNegativeButton("No",new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,int id) {
+								// if this button is clicked, just close
+								// the dialog box and do nothing
+								dialog.cancel();
+							}
+						});
+				
+					AlertDialog alertDialog = alertDialogBuilder.create();
+					
+					alertDialog.show();
+			
 				return false;
 			}
 		});
 		
 	}
 
+	
+	private void TimerMethod()
+	{
+		
+	    this.runOnUiThread(Timer_Tick);
+	}
+
+	private Runnable Timer_Tick = new Runnable() {
+	    public void run() {
+
+	    	ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Quote");
+	    	try {
+				if (_oldCount < query.count()) {
+					showData();
+				} else {
+					// do nothingd
+				}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	
+	    }  
+	};
+	
+	
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
 		showData();
-//		_query = new ParseQuery<ParseObject>("Quote");
-//		try {
-//			if (_query.count()>_oldCount) {
-//				showData();
-//			}
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
 	}
 	
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		try {
-			_oldCount= _query.count();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 
 	@Override

@@ -59,8 +59,8 @@
         
         NSLog(@"UNREACHABLE!");
         reachable = false;
-        self.navigationItem.rightBarButtonItem.enabled = NO;
-        self.navigationItem.leftBarButtonItem.enabled = NO;
+//        self.navigationItem.rightBarButtonItem.enabled = NO;
+//        self.navigationItem.leftBarButtonItem.enabled = NO;
     };
     
     // Start the notifier, which will cause the reachability object to retain itself!
@@ -86,7 +86,8 @@
 
 - (void)saveQuote{
     
-    [self checkRechability];
+//    [self checkRechability];
+    reachable = true;
     if (reachable == true) {
         if (![self.quoteText.text isEqualToString:@""] && ![self.authorText.text isEqualToString:@""]) {
             PFACL *defaultACL = [PFACL ACL];
@@ -129,6 +130,15 @@
             [newQuote saveEventually:^(BOOL succeeded, NSError *error) {
                 NSLog(@"Object saved to Parse! :)");
             }];
+            
+            
+            NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  @"New Post", @"alert",
+                                  nil];
+            PFPush *push = [[PFPush alloc] init];
+            [push setChannels:[NSArray arrayWithObjects:@"updates", nil]];
+            [push setData:data];
+            [push sendPushInBackground];
             
             [ self dismissViewControllerAnimated:YES completion:nil];
             

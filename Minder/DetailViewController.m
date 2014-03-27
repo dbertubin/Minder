@@ -57,8 +57,8 @@
         
         NSLog(@"UNREACHABLE!");
         reachable = false;
-        self.navigationItem.rightBarButtonItem.enabled = NO;
-        self.navigationItem.leftBarButtonItem.enabled = NO;
+//        self.navigationItem.rightBarButtonItem.enabled = NO;
+//        self.navigationItem.leftBarButtonItem.enabled = NO;
 //        [self.deleteButton setEnabled:NO];
     };
     
@@ -72,6 +72,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+
     
     [self checkRechability];
     [self.quoteText setEditable:NO];
@@ -100,7 +101,7 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-        [self checkRechability];
+//        [self checkRechability];
 
 }
 
@@ -113,8 +114,8 @@
 
 - (IBAction)editSaveItem:(UIBarButtonItem *)sender {
     
-    [self checkRechability];
-    
+//    [self checkRechability];
+    reachable = true;
     if (reachable == true) {
         if ([self.editSaveButton.title  isEqual: @"Edit"]) {
             self.editSaveButton.title = @"Save";
@@ -213,8 +214,10 @@
 
 -(void)deleteItem
 {
-    PFQuery *postFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
-    PFObject *postToDelete = [postFromCurrentUser getObjectWithId:postID];
+//    PFQuery *postFromCurrentUser = [PFQuery queryWithClassName:@"Quote"];
+    MainViewController *mvc = [[MainViewController alloc] init];
+    
+    PFObject *postToDelete = [[mvc query]getObjectWithId:postID];
     [postToDelete deleteEventually];
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
