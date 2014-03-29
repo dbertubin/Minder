@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
 						// Here we can configure a ParseQuery to our heart's desire.
 						 
 						 _query = new ParseQuery<ParseObject>("Quote");
-//						 _query.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
+						 _query.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
 						 try {
 							_oldCount = _query.count();
 						} catch (ParseException e) {
