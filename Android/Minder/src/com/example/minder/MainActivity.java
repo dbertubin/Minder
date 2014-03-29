@@ -59,11 +59,11 @@ public class MainActivity extends Activity {
 		
 		
 		
-		PushService.setDefaultPushCallback(this, MainActivity.class);
-		ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-		installation.put("user",ParseUser.getCurrentUser());
-		installation.saveInBackground();
-		PushService.subscribe(MainActivity.this, "updates", MainActivity.class);
+//		PushService.setDefaultPushCallback(this, MainActivity.class);
+//		ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+//		installation.put("user",ParseUser.getCurrentUser());
+//		installation.saveInBackground();
+//		PushService.subscribe(MainActivity.this, "updates", MainActivity.class);
 		
 		// Check to see if user is logged in .. if they are then display if not show LoginOrSignUp ... 
 		ParseUser currentUser = ParseUser.getCurrentUser();
@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
 						// Here we can configure a ParseQuery to our heart's desire.
 						 
 						 _query = new ParseQuery<ParseObject>("Quote");
-						 _query.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
+//						 _query.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
 						 try {
 							_oldCount = _query.count();
 						} catch (ParseException e) {

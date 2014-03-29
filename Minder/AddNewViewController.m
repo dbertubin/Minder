@@ -131,14 +131,20 @@
                 NSLog(@"Object saved to Parse! :)");
             }];
             
+            if (reachable== true    ) {
+                MainViewController *mcv = [[MainViewController alloc] init];
+                [mcv.quotes addObject:newQuote];
+                NSLog(@"this was hit ");
+            }
             
-            NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  @"New Post", @"alert",
-                                  nil];
-            PFPush *push = [[PFPush alloc] init];
-            [push setChannels:[NSArray arrayWithObjects:@"updates", nil]];
-            [push setData:data];
-            [push sendPushInBackground];
+            
+//            NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                  @"New Post", @"alert",
+//                                  nil];
+//            PFPush *push = [[PFPush alloc] init];
+//            [push setChannels:[NSArray arrayWithObjects:@"updates", nil]];
+//            [push setData:data];
+//            [push sendPushInBackground];
             
             [ self dismissViewControllerAnimated:YES completion:nil];
             
